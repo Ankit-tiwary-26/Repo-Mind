@@ -6,9 +6,21 @@ export async function cloneRepo(gitUrl, githubToken = null) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ git_url: gitUrl, github_token: githubToken }),
   })
-  if (!res.ok) throw new Error('Failed to clone repo')
-  return res.json()
+  if (!res.ok) {
+  const errorData = await res.json().catch(() => null);
+
+  const message =
+    errorData?.detail?.[0]?.msg ||
+    errorData?.detail ||
+    errorData?.message ||
+    `Request failed with status ${res.status}`;
+
+  throw new Error(message);
 }
+
+  return res.json();
+
+}  
 
 export async function uploadZip(file) {
   const formData = new FormData()

@@ -1,4 +1,4 @@
-const API_BASE = 'https://repo-mind-71fe.onrender.com/api/v1'
+const API_BASE = 'https://repo-mind-71fe.onrender.com/api/v1';
 
 export async function cloneRepo(gitUrl, githubToken = null) {
   const res = await fetch(`${API_BASE}/repo/clone`, {

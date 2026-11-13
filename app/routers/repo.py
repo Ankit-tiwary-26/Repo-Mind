@@ -43,11 +43,17 @@ def _ingest_and_index(project_id: str, local_path: str, repo_url: str = "") -> d
 
 @router.post("/clone")
 def clone(req: CloneRequest):
+    local_path = None
     try:
         project_id, local_path = ingest.clone_repo(req.git_url, req.github_token)
+        return _ingest_and_index(project_id, local_path, repo_url=req.git_url)
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Clone failed: {e}")
-    return _ingest_and_index(project_id, local_path, repo_url=req.git_url)
+        if local_path:
+            shutil.rmtree(local_path, ignore_errors=True)
+        raise HTTPException(
+            status_code=400,
+            detail=f"Repository ingest failed: {e}",
+        ) from e
 
 
 @router.post("/upload-zip")

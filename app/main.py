@@ -1,3 +1,4 @@
+from starlette.middleware.cors import CORSMiddleware
 
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
@@ -20,16 +21,16 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-app.add_middleware(
-    CORSMiddleware,
+app = CORSMiddleware(
+    app=app,
     allow_origins=[
-        "https://repo-mind-rho.vercel.app"
+        "https://repo-mind-rho.vercel.app",
+        "http://localhost:5173",
     ],
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 app.include_router(repo.router)
 app.include_router(chat.router)
 
